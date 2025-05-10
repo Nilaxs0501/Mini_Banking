@@ -1,7 +1,9 @@
 import os
-
+import datetime
 Bank_accounts = {}
 Transaction_history = {}
+def date_time():
+    return datetime.date.today()
 
 def Customer_info():
     Name = input("Enter your Name: ")
@@ -11,6 +13,7 @@ def Customer_info():
     return [Name, Nic_num, Username, Password]
 
 def Create_Customer_and_User():
+    dt_info=date_time()
     customer = Customer_info()
     [name, nic, username, password ]=customer
 
@@ -22,10 +25,10 @@ def Create_Customer_and_User():
     Transaction_history[username] = []
 
     with open("Customers_info.txt","a")as Customers_file:
-        Customers_file.write(f"{name},{nic}\n")
+        Customers_file.write(f"{ dt_info},{name},{nic}\n")
 
     with open("User_info.txt","a")as User_file:    
-        User_file.write(f"{username},{password}\n")
+        User_file.write(f"{ dt_info},{username},{password}\n")
     print(f"Customer {username} created successfully.")
     print(f" {username} Welcome our Mini Bank ")
     
@@ -48,6 +51,7 @@ def View_All_Customers():
             print("No customer data available.")
 
 def Deposit(username):
+    dt_info=date_time()
     try:
         amount = float(input("Enter deposit amount: "))
         if amount <= 0:
@@ -56,13 +60,14 @@ def Deposit(username):
         Bank_accounts[username] += amount
         Transaction_history[username].append(f"Deposited {amount}")
         with open("Transaction.txt", "a") as file:
-                file.write(f"{username}: deposit:{amount}\n")
+                file.write(f"{ dt_info},{username}: deposit:{amount}\n")
 
         print(f"Successfully deposited {amount}. New balance is {Bank_accounts[username]}")
     except ValueError:
         print("Please enter a valid amount.")
 
 def Withdraw(username):
+    dt_info=date_time()
     try:
         amount = float(input("Enter withdrawal amount: "))
         if amount <= 0:
@@ -73,7 +78,7 @@ def Withdraw(username):
             Bank_accounts[username] -= amount
             Transaction_history[username].append(f"Withdrew {amount}")
             with open("Transaction.txt", "a") as file:
-                file.write(f"{username}: withdraw :{amount}\n")
+                file.write(f"{ dt_info},{username}: withdraw :{amount}\n")
 
             print(f"Successfully withdrew {amount}. New balance is {Bank_accounts[username]}")
 
@@ -83,6 +88,7 @@ def Withdraw(username):
 
 
 def Customer_Creation():
+    dt_info=date_time()
     try:
         username = input("Enter username for new account: ")
         if username in Bank_accounts:
@@ -99,7 +105,7 @@ def Customer_Creation():
             print(f"Account created successfully. Welcome, {username}!")
             print(f"New balance is: {balance}")
             with open("Transaction.txt", "a") as file:
-                file.write(f"{username}: {balance}\n")
+                file.write(f"{ dt_info},{username}:Initial deposit: {balance}\n")
 
         else:
             print("Invalid deposit amount. Must be greater than zero.")
@@ -206,11 +212,14 @@ def main():
                 print("Invalid login please try again.")
         elif choice == '2':
             username = input("Enter your username: ")
-            if username in Bank_accounts:
-                customer_menu(username)
-            else:
-                print("Account does not exist. Please contact admin to create an account.")
-                continue
+            with open("User_info.txt","r")as New_file:    
+                for line in New_file:
+                    words= line.strip().split(',')
+                    if words[1]== username:
+                        customer_menu(username)
+                    else:
+                        print("Account does not exist. Please contact admin to create an account.")
+                break
         elif choice == '3':
             print("Thank you for using the Mini Banking System. Goodbye!")
             break
