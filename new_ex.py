@@ -217,8 +217,6 @@ def main():
                     words= line.strip().split(',')
                     if words[1]== username:
                         customer_menu(username)
-                    else:
-                        print("Account does not exist. Please contact admin to create an account.")
                 break
         elif choice == '3':
             print("Thank you for using the Mini Banking System. Goodbye!")
