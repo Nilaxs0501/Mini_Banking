@@ -198,8 +198,8 @@ def customer_menu(username):
 def main():
     while True:
         print("\nWelcome to Mini Banking System")
-        print("1. Admin Login")
-        print("2. Customer Login")
+        print("1. ===========Admin Login===========")
+        print("2. ===========Customer Login========")
         print("3. Exit")
         choice = input("Enter your choice: ")
 
@@ -207,6 +207,8 @@ def main():
             username = input("Enter admin username: ")
             password = input("Enter admin password: ")
             if password == "1234" and username == "admin":
+                with open("User_info.txt","a")as User_file:    
+                    User_file.write(f"{username},{password}\n")
                 admin_menu()
             else:
                 print("Invalid login please try again.")
