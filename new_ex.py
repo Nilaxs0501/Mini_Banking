@@ -1,9 +1,14 @@
 import os
 import datetime
+
+
 Bank_accounts = {}
 Transaction_history = {}
+
+
 def date_time():
     return datetime.date.today()
+
 
 def Customer_info():
     Name = input("Enter your Name: ")
@@ -11,6 +16,7 @@ def Customer_info():
     Username = input("Enter your username: ")
     Password = input("Enter your password: ")
     return [Name, Nic_num, Username, Password]
+
 
 def Create_Customer_and_User():
     dt_info=date_time()
@@ -31,10 +37,7 @@ def Create_Customer_and_User():
         User_file.write(f"{ dt_info},{username},{password}\n")
     print(f"Customer {username} created successfully.")
     print(f" {username} Welcome our Mini Bank ")
-    
 
-
-    
 
 def View_All_Customers():
     if not os.path.exists("Customers_info.txt"):
@@ -49,6 +52,7 @@ def View_All_Customers():
                 print(line.strip())
         else:
             print("No customer data available.")
+
 
 def Deposit(username):
     dt_info=date_time()
@@ -66,14 +70,19 @@ def Deposit(username):
     except ValueError:
         print("Please enter a valid amount.")
 
+
 def Withdraw(username):
     dt_info=date_time()
     try:
         amount = float(input("Enter withdrawal amount: "))
         if amount <= 0:
             print("Invalid withdrawal amount.")
-        elif amount > Bank_accounts[username]:
+        elif amount > Bank_accounts[username] :
             print("Insufficient balance.")
+        elif Bank_accounts[username]['balance'] < 10000:
+            print("Warning! Your Balance below RS.10000!")
+
+
         else:
             Bank_accounts[username] -= amount
             Transaction_history[username].append(f"Withdrew {amount}")
@@ -121,8 +130,20 @@ def get_transaction_history(username):
     else:
         return f"No transaction history found for user '{username}'."
         
-        
-
+def Change_password(): 
+    current= input("Enter your password: ")     
+    with open("User_info.txt","r")as New_file:    
+                for line in New_file:
+                    words= line.strip().split(',')
+                    if words[2]== current:
+                        print("Create New Password")
+                        new = input("Enter your  New Password: ")
+                        if len(new)>6:
+                            print("You Must give eligible Number is < 6 ")
+                        elif len(new)<6 and len(new)==6:
+                            with open("User_info.txt","a")as file:
+                                file.write(f"{new}\n")
+                                print(f"Created your New Password {new}")
 
 #============================= ADMIN MENU====================================
 def admin_menu():
@@ -176,7 +197,8 @@ def customer_menu(username):
         print("2. Deposit money")
         print("3. Withdraw money")
         print("4. View Transaction History")
-        print("5. Logout")
+        print("5. Change  your Password")
+        print("6. Logout")
         choice = input("Enter choice: ")
 
         if choice == '1':
@@ -187,8 +209,9 @@ def customer_menu(username):
             Withdraw(username)
         elif choice == '4':
             print(Transaction_history)
-
         elif choice == '5':
+            Change_password()
+        elif choice == '6':
             print(f"Logging out {username}.")
             break
         else:
@@ -209,6 +232,7 @@ def main():
             if password == "1234" and username == "admin":
                 with open("User_info.txt","a")as User_file:    
                     User_file.write(f"{username},{password}\n")
+                    print("Welcome Admin Our Banking System ")
                 admin_menu()
             else:
                 print("Invalid login please try again.")
@@ -220,6 +244,7 @@ def main():
                     if words[1]== username:
                         customer_menu(username)
                 break
+
         elif choice == '3':
             print("Thank you for using the Mini Banking System. Goodbye!")
             break
